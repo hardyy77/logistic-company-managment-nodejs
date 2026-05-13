@@ -1,7 +1,7 @@
 const pool = require('../db');
 
-async function getAllTransportOrders() {
-  const result = await pool.query(`
+async function getAllTransportOrders(status) {
+  let query = `
     SELECT
       transport_orders.id,
       transport_orders.order_number,
@@ -21,9 +21,18 @@ async function getAllTransportOrders() {
       transport_orders.created_by_user_id,
       transport_orders.created_at
     FROM transport_orders
-    ORDER BY transport_orders.id ASC
-  `);
+  `;
 
+  const params = [];
+
+  if (status) {
+    query += ` WHERE transport_orders.status = $1`;
+    params.push(status);
+  }
+
+  query += ` ORDER BY transport_orders.id ASC`;
+
+  const result = await pool.query(query, params);
   return result.rows;
 }
 
@@ -96,9 +105,34 @@ function validateInspectionDate(inspectionValidUntil) {
   return inspectionDate >= today;
 }
 
-async function validateBusinessRules({ driverId, vehicleId, trailerId, cargoWeightKg }) {
+function isTrailerCompatibleWithCargo(trailerType, cargoType) {
+  if (!cargoType) {
+    return true;
+  }
+
+  const normalizedCargoType = String(cargoType).trim().toLowerCase();
+  const normalizedTrailerType = String(trailerType).trim().toLowerCase();
+
+  const compatibilityMap = {
+    curtain: ['general', 'electronics', 'parcel', 'pallet'],
+    box: ['general', 'electronics', 'parcel', 'pallet'],
+    refrigerated: ['food', 'frozen', 'pharma'],
+    tanker: ['liquid', 'fuel', 'chemical'],
+    dump: ['bulk', 'aggregate', 'construction'],
+    container: ['containerized'],
+  };
+
+  const allowedCargoTypes = compatibilityMap[normalizedTrailerType];
+
+  if (!allowedCargoTypes) {
+    return false;
+  }
+
+  return allowedCargoTypes.includes(normalizedCargoType);
+}
+
+async function validateBusinessRules({ driverId, vehicleId, trailerId, cargoWeightKg, cargoType }) {
   let vehicle = null;
-  let trailer = null;
 
   if (driverId) {
     const driver = await getDriverById(driverId);
@@ -129,7 +163,7 @@ async function validateBusinessRules({ driverId, vehicleId, trailerId, cargoWeig
   }
 
   if (trailerId) {
-    trailer = await getTrailerById(trailerId);
+    const trailer = await getTrailerById(trailerId);
 
     if (!trailer) {
       return { ok: false, message: 'Wybrana naczepa nie istnieje' };
@@ -145,6 +179,13 @@ async function validateBusinessRules({ driverId, vehicleId, trailerId, cargoWeig
 
     if (Number(trailer.capacity_kg) < Number(cargoWeightKg)) {
       return { ok: false, message: 'Ładowność naczepy jest niewystarczająca dla tego zlecenia' };
+    }
+
+    if (!isTrailerCompatibleWithCargo(trailer.trailer_type, cargoType)) {
+      return {
+        ok: false,
+        message: `Typ naczepy "${trailer.trailer_type}" nie pasuje do ładunku "${cargoType}"`,
+      };
     }
   } else if (vehicleId) {
     if (Number(vehicle.capacity_kg) < Number(cargoWeightKg)) {
@@ -179,6 +220,7 @@ async function createTransportOrder(data) {
     vehicleId,
     trailerId,
     cargoWeightKg,
+    cargoType,
   });
 
   if (!validation.ok) {
@@ -276,6 +318,7 @@ async function updateTransportOrder(id, data) {
     vehicleId,
     trailerId,
     cargoWeightKg,
+    cargoType,
   });
 
   if (!validation.ok) {

@@ -2,7 +2,8 @@ const transportOrderService = require('../services/transportOrderService');
 
 async function getTransportOrders(req, res) {
   try {
-    const orders = await transportOrderService.getAllTransportOrders();
+    const { status } = req.query;
+    const orders = await transportOrderService.getAllTransportOrders(status);
     return res.json(orders);
   } catch (err) {
     console.error(err.message);

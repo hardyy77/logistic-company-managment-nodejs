@@ -1,7 +1,7 @@
 const pool = require('../db');
 
-async function getAllDrivers() {
-  const result = await pool.query(`
+async function getAllDrivers(status) {
+  let query = `
     SELECT
       drivers.id,
       drivers.first_name,
@@ -15,9 +15,18 @@ async function getAllDrivers() {
       drivers.user_id,
       drivers.created_at
     FROM drivers
-    ORDER BY drivers.id ASC
-  `);
+  `;
 
+  const params = [];
+
+  if (status) {
+    query += ` WHERE drivers.status = $1`;
+    params.push(status);
+  }
+
+  query += ` ORDER BY drivers.id ASC`;
+
+  const result = await pool.query(query, params);
   return result.rows;
 }
 

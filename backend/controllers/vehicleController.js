@@ -2,7 +2,8 @@ const vehicleService = require('../services/vehicleService');
 
 async function getVehicles(req, res) {
   try {
-    const vehicles = await vehicleService.getAllVehicles();
+    const { status } = req.query;
+    const vehicles = await vehicleService.getAllVehicles(status);
     return res.json(vehicles);
   } catch (err) {
     console.error(err.message);

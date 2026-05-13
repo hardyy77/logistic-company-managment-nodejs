@@ -1,19 +1,18 @@
 require('dotenv').config();
 
 const express = require('express');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const pool = require('./db');
-const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:5173'
 }));
-
-app.use(express.json());
 
 pool.query('SELECT NOW()', (err, result) => {
   if (err) {
@@ -57,15 +56,17 @@ const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const driversRouter = require('./routes/drivers');
 const vehiclesRouter = require('./routes/vehicles');
-const transportOrdersRouter = require('./routes/transportOrders');
 const trailersRouter = require('./routes/trailers');
+const transportOrdersRouter = require('./routes/transportOrders');
+const dashboardRouter = require('./routes/dashboard');
 
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/drivers', driversRouter);
 app.use('/vehicles', vehiclesRouter);
-app.use('/transport-orders', transportOrdersRouter);
 app.use('/trailers', trailersRouter);
+app.use('/transport-orders', transportOrdersRouter);
+app.use('/dashboard', dashboardRouter);
 
 app.get('/', (req, res) => {
   res.send('API działa. Wejdź na /api-docs');

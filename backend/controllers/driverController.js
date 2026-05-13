@@ -2,7 +2,8 @@ const driverService = require('../services/driverService');
 
 async function getDrivers(req, res) {
   try {
-    const drivers = await driverService.getAllDrivers();
+    const { status } = req.query;
+    const drivers = await driverService.getAllDrivers(status);
     return res.json(drivers);
   } catch (err) {
     console.error(err.message);

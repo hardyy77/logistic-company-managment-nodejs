@@ -2,7 +2,8 @@ const trailerService = require('../services/trailerService');
 
 async function getTrailers(req, res) {
   try {
-    const trailers = await trailerService.getAllTrailers();
+    const { status } = req.query;
+    const trailers = await trailerService.getAllTrailers(status);
     return res.json(trailers);
   } catch (err) {
     console.error(err.message);

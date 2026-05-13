@@ -1,7 +1,7 @@
 const pool = require('../db');
 
-async function getAllVehicles() {
-  const result = await pool.query(`
+async function getAllVehicles(status) {
+  let query = `
     SELECT
       id,
       registration_number,
@@ -16,9 +16,18 @@ async function getAllVehicles() {
       insurance_valid_until,
       created_at
     FROM vehicles
-    ORDER BY id ASC
-  `);
+  `;
 
+  const params = [];
+
+  if (status) {
+    query += ` WHERE status = $1`;
+    params.push(status);
+  }
+
+  query += ` ORDER BY id ASC`;
+
+  const result = await pool.query(query, params);
   return result.rows;
 }
 
