@@ -59,6 +59,8 @@ const vehiclesRouter = require('./routes/vehicles');
 const trailersRouter = require('./routes/trailers');
 const transportOrdersRouter = require('./routes/transportOrders');
 const dashboardRouter = require('./routes/dashboard');
+const permissionsRouter = require('./routes/permissions');
+const driverPanelRouter = require('./routes/driverPanel');
 
 app.use('/auth', authRouter);
 app.use('/users', usersRouter);
@@ -67,6 +69,8 @@ app.use('/vehicles', vehiclesRouter);
 app.use('/trailers', trailersRouter);
 app.use('/transport-orders', transportOrdersRouter);
 app.use('/dashboard', dashboardRouter);
+app.use('/permissions', permissionsRouter);
+app.use('/driver-panel', driverPanelRouter);
 
 app.get('/', (req, res) => {
   res.send('API działa. Wejdź na /api-docs');

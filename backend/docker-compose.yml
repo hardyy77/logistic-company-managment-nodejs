@@ -10,8 +10,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - logistic_postgres_data:/var/lib/postgresql/data
+      - ./db/init_full.sql:/docker-entrypoint-initdb.d/01-init_full.sql:ro
 
 volumes:
-  postgres_data:
-    name: logistic-company-managment-nodejs_postgres_data
+  logistic_postgres_data:
+    name: logistic_postgres_data

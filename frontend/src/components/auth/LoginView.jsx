@@ -2,99 +2,62 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Truck, Users, Package } from "lucide-react";
 
 export default function LoginView({ onLogin, loading, error }) {
-  const [email, setEmail] = useState("arek@example.com");
-  const [password, setPassword] = useState("tajnehaslo123");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin({ email, password });
+    await onLogin(form);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
-        <Card className="rounded-2xl shadow-sm">
-          <CardContent className="flex h-full flex-col justify-center gap-6 p-8">
-            <div className="space-y-3">
-              <h1 className="text-4xl font-semibold">Panel logistyczny</h1>
-              <p className="text-base leading-7 text-muted-foreground">
-                Roboczy interfejs do zarządzania kierowcami, pojazdami, naczepami
-                i zleceniami bez używania Swaggera.
-              </p>
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+      <Card className="w-full max-w-md rounded-2xl shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-2xl">Logowanie</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, email: e.target.value }))
+                }
+                placeholder="Wpisz email"
+              />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              <Card>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <Users className="h-5 w-5" />
-                  <div>
-                    <div className="font-medium">Kierowcy</div>
-                    <div className="text-xs text-muted-foreground">statusy i dane</div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <Truck className="h-5 w-5" />
-                  <div>
-                    <div className="font-medium">Pojazdy</div>
-                    <div className="text-xs text-muted-foreground">gotowość do pracy</div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <Package className="h-5 w-5" />
-                  <div>
-                    <div className="font-medium">Zlecenia</div>
-                    <div className="text-xs text-muted-foreground">powiązanie zasobów</div>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Hasło</label>
+              <Input
+                type="password"
+                value={form.password}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, password: e.target.value }))
+                }
+                placeholder="Wpisz hasło"
+              />
             </div>
-          </CardContent>
-        </Card>
 
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle>Logowanie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label>Email</Label>
-                <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+            {error ? (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {error}
               </div>
+            ) : null}
 
-              <div className="space-y-2">
-                <Label>Hasło</Label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              {error ? (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              ) : null}
-
-              <Button className="w-full" type="submit" disabled={loading}>
-                {loading ? "Logowanie..." : "Zaloguj się"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logowanie..." : "Zaloguj się"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

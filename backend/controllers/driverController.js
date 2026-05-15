@@ -44,7 +44,7 @@ async function createDriver(req, res) {
       licenseCategory,
       medicalExamValidUntil,
       status,
-      userId,
+      createUserAccount,
     } = req.body;
 
     if (!firstName || !lastName || !licenseNumber || !licenseCategory) {
@@ -53,7 +53,7 @@ async function createDriver(req, res) {
       });
     }
 
-    const driver = await driverService.createDriver({
+    const result = await driverService.createDriver({
       firstName,
       lastName,
       phone,
@@ -62,10 +62,22 @@ async function createDriver(req, res) {
       licenseCategory,
       medicalExamValidUntil,
       status,
-      userId,
+      createUserAccount,
     });
 
-    return res.status(201).json(driver);
+    if (result?.error) {
+      return res.status(result.statusCode || 400).json({
+        error: result.error,
+      });
+    }
+
+    return res.status(201).json({
+      message: result.createdAccount
+        ? 'Kierowca i konto użytkownika zostały utworzone'
+        : 'Kierowca został utworzony',
+      driver: result.driver,
+      createdAccount: result.createdAccount,
+    });
   } catch (err) {
     console.error(err.message);
     return res.status(500).json({
@@ -86,7 +98,6 @@ async function updateDriver(req, res) {
       licenseCategory,
       medicalExamValidUntil,
       status,
-      userId,
     } = req.body;
 
     if (!firstName || !lastName || !licenseNumber || !licenseCategory || !status) {
@@ -104,7 +115,6 @@ async function updateDriver(req, res) {
       licenseCategory,
       medicalExamValidUntil,
       status,
-      userId,
     });
 
     if (!driver) {

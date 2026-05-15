@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
 import LoginView from "@/components/auth/LoginView";
 import DashboardCards from "@/components/common/DashboardCards";
+import ToastMessage from "@/components/common/ToastMessage";
 import SectionTitle from "@/components/layout/SectionTitle";
 import DriversSection from "@/components/sections/DriversSection";
 import VehiclesSection from "@/components/sections/VehiclesSection";
 import TrailersSection from "@/components/sections/TrailersSection";
 import OrdersSection from "@/components/sections/OrdersSection";
-import RulesSection from "@/components/sections/RulesSection";
+import DriverPanel from "@/components/driver/DriverPanel";
 
 import { apiRequest } from "@/services/api";
 import { buildStatusQuery } from "@/utils/buildStatusQuery";
@@ -41,16 +41,16 @@ export default function App() {
     if (!token) return;
 
     setLoadingData(true);
-    setGlobalError("");
 
     try {
-      const [driversData, vehiclesData, trailersData, ordersData, statsData] = await Promise.all([
-        apiRequest(`/drivers${buildStatusQuery(driverFilterStatus)}`, {}, token),
-        apiRequest(`/vehicles${buildStatusQuery(vehicleFilterStatus)}`, {}, token),
-        apiRequest(`/trailers${buildStatusQuery(trailerFilterStatus)}`, {}, token),
-        apiRequest(`/transport-orders${buildStatusQuery(orderFilterStatus)}`, {}, token),
-        apiRequest("/dashboard/stats", {}, token),
-      ]);
+      const [driversData, vehiclesData, trailersData, ordersData, statsData] =
+        await Promise.all([
+          apiRequest(`/drivers${buildStatusQuery(driverFilterStatus)}`, {}, token),
+          apiRequest(`/vehicles${buildStatusQuery(vehicleFilterStatus)}`, {}, token),
+          apiRequest(`/trailers${buildStatusQuery(trailerFilterStatus)}`, {}, token),
+          apiRequest(`/transport-orders${buildStatusQuery(orderFilterStatus)}`, {}, token),
+          apiRequest("/dashboard/stats", {}, token),
+        ]);
 
       setDrivers(driversData);
       setVehicles(vehiclesData);
@@ -65,8 +65,28 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (user?.role === "driver") return;
     fetchAll();
-  }, [token, driverFilterStatus, vehicleFilterStatus, trailerFilterStatus, orderFilterStatus]);
+  }, [
+    token,
+    user,
+    driverFilterStatus,
+    vehicleFilterStatus,
+    trailerFilterStatus,
+    orderFilterStatus,
+  ]);
+
+  useEffect(() => {
+    if (!globalSuccess) return;
+    const timer = setTimeout(() => setGlobalSuccess(""), 3500);
+    return () => clearTimeout(timer);
+  }, [globalSuccess]);
+
+  useEffect(() => {
+    if (!globalError) return;
+    const timer = setTimeout(() => setGlobalError(""), 4500);
+    return () => clearTimeout(timer);
+  }, [globalError]);
 
   const handleLogin = async ({ email, password }) => {
     setLoginLoading(true);
@@ -80,6 +100,7 @@ export default function App() {
 
       setToken(data.token);
       setUser(data.user);
+      setGlobalSuccess("Zalogowano pomyślnie.");
     } catch (err) {
       setLoginError(err.message);
     } finally {
@@ -103,8 +124,25 @@ export default function App() {
     return <LoginView onLogin={handleLogin} loading={loginLoading} error={loginError} />;
   }
 
+  if (user?.role === "driver") {
+    return <DriverPanel token={token} user={user} onLogout={logout} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 p-6">
+      <div className="pointer-events-none fixed right-4 top-4 z-50 flex flex-col gap-3">
+        <ToastMessage
+          type="success"
+          message={globalSuccess}
+          onClose={() => setGlobalSuccess("")}
+        />
+        <ToastMessage
+          type="error"
+          message={globalError}
+          onClose={() => setGlobalError("")}
+        />
+      </div>
+
       <div className="mx-auto flex max-w-7xl flex-col gap-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
@@ -127,31 +165,18 @@ export default function App() {
 
         <DashboardCards stats={dashboardStats} />
 
-        {globalError ? (
-          <Alert variant="destructive">
-            <AlertDescription>{globalError}</AlertDescription>
-          </Alert>
-        ) : null}
-
-        {globalSuccess ? (
-          <Alert>
-            <AlertDescription>{globalSuccess}</AlertDescription>
-          </Alert>
-        ) : null}
-
         {loadingData ? (
-          <Alert>
-            <AlertDescription>Ładowanie danych z backendu...</AlertDescription>
-          </Alert>
+          <div className="rounded-xl border bg-white px-4 py-3 text-sm text-muted-foreground shadow-sm">
+            Ładowanie danych z backendu...
+          </div>
         ) : null}
 
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="orders">Zlecenia</TabsTrigger>
             <TabsTrigger value="drivers">Kierowcy</TabsTrigger>
             <TabsTrigger value="vehicles">Pojazdy</TabsTrigger>
             <TabsTrigger value="trailers">Naczepy</TabsTrigger>
-            <TabsTrigger value="rules">Zasady</TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="space-y-4">
@@ -162,9 +187,6 @@ export default function App() {
             <OrdersSection
               token={token}
               orders={orders}
-              drivers={drivers}
-              vehicles={vehicles}
-              trailers={trailers}
               user={user}
               refresh={fetchAll}
               setError={setGlobalError}
@@ -177,7 +199,7 @@ export default function App() {
           <TabsContent value="drivers" className="space-y-4">
             <SectionTitle
               title="Kierowcy"
-              subtitle="Ewidencja kierowców, dane i statusy dostępności."
+              subtitle="Ewidencja kierowców, dane, statusy i uprawnienia."
             />
             <DriversSection
               token={token}
@@ -220,14 +242,6 @@ export default function App() {
               filterStatus={trailerFilterStatus}
               setFilterStatus={setTrailerFilterStatus}
             />
-          </TabsContent>
-
-          <TabsContent value="rules" className="space-y-4">
-            <SectionTitle
-              title="Zasady robocze"
-              subtitle="Pomocnicza ściąga, żeby ograniczyć chaos przy statusach."
-            />
-            <RulesSection />
           </TabsContent>
         </Tabs>
       </div>

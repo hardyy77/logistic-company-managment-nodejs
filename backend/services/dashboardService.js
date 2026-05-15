@@ -14,7 +14,11 @@ async function getDashboardStats() {
     inProgressOrdersCount,
   ] = await Promise.all([
     pool.query(`SELECT COUNT(*)::int AS count FROM drivers`),
-    pool.query(`SELECT COUNT(*)::int AS count FROM drivers WHERE status = 'active'`),
+    pool.query(`
+      SELECT COUNT(*)::int AS count
+      FROM drivers
+      WHERE status IN ('available', 'in_route')
+    `),
     pool.query(`SELECT COUNT(*)::int AS count FROM vehicles`),
     pool.query(`SELECT COUNT(*)::int AS count FROM vehicles WHERE status = 'available'`),
     pool.query(`SELECT COUNT(*)::int AS count FROM trailers`),

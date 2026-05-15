@@ -33,6 +33,31 @@ async function getTransportOrder(req, res) {
   }
 }
 
+async function getAvailableResources(req, res) {
+  try {
+    const { cargoType, cargoWeightKg, excludeOrderId } = req.query;
+
+    if (!cargoType || cargoWeightKg === undefined) {
+      return res.status(400).json({
+        error: 'cargoType i cargoWeightKg są wymagane',
+      });
+    }
+
+    const resources = await transportOrderService.getAvailableResources({
+      cargoType,
+      cargoWeightKg,
+      excludeOrderId: excludeOrderId ? Number(excludeOrderId) : null,
+    });
+
+    return res.json(resources);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({
+      error: 'Błąd pobierania dostępnych zasobów',
+    });
+  }
+}
+
 async function createTransportOrder(req, res) {
   try {
     const {
@@ -42,6 +67,7 @@ async function createTransportOrder(req, res) {
       deliveryLocation,
       cargoWeightKg,
       cargoType,
+      cargoName,
       plannedDistanceKm,
       plannedDurationMinutes,
       estimatedCost,
@@ -53,9 +79,9 @@ async function createTransportOrder(req, res) {
       createdByUserId,
     } = req.body;
 
-    if (!orderNumber || !clientName || !pickupLocation || !deliveryLocation || cargoWeightKg === undefined || !plannedDate) {
+    if (!clientName || !pickupLocation || !deliveryLocation || cargoWeightKg === undefined || !plannedDate) {
       return res.status(400).json({
-        error: 'orderNumber, clientName, pickupLocation, deliveryLocation, cargoWeightKg i plannedDate są wymagane',
+        error: 'clientName, pickupLocation, deliveryLocation, cargoWeightKg i plannedDate są wymagane',
       });
     }
 
@@ -66,6 +92,7 @@ async function createTransportOrder(req, res) {
       deliveryLocation,
       cargoWeightKg,
       cargoType,
+      cargoName,
       plannedDistanceKm,
       plannedDurationMinutes,
       estimatedCost,
@@ -86,6 +113,13 @@ async function createTransportOrder(req, res) {
     return res.status(201).json(order);
   } catch (err) {
     console.error(err.message);
+
+    if (err.code === '23505') {
+      return res.status(400).json({
+        error: 'Kierowca, pojazd lub naczepa są już przypisane do innego aktywnego zlecenia',
+      });
+    }
+
     return res.status(500).json({
       error: 'Błąd tworzenia zlecenia transportowego',
     });
@@ -102,6 +136,7 @@ async function updateTransportOrder(req, res) {
       deliveryLocation,
       cargoWeightKg,
       cargoType,
+      cargoName,
       plannedDistanceKm,
       plannedDurationMinutes,
       estimatedCost,
@@ -126,6 +161,7 @@ async function updateTransportOrder(req, res) {
       deliveryLocation,
       cargoWeightKg,
       cargoType,
+      cargoName,
       plannedDistanceKm,
       plannedDurationMinutes,
       estimatedCost,
@@ -152,6 +188,13 @@ async function updateTransportOrder(req, res) {
     return res.json(order);
   } catch (err) {
     console.error(err.message);
+
+    if (err.code === '23505') {
+      return res.status(400).json({
+        error: 'Kierowca, pojazd lub naczepa są już przypisane do innego aktywnego zlecenia',
+      });
+    }
+
     return res.status(500).json({
       error: 'Błąd aktualizacji zlecenia transportowego',
     });
@@ -184,6 +227,7 @@ async function deleteTransportOrder(req, res) {
 module.exports = {
   getTransportOrders,
   getTransportOrder,
+  getAvailableResources,
   createTransportOrder,
   updateTransportOrder,
   deleteTransportOrder,

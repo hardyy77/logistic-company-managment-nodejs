@@ -13,6 +13,12 @@ const roleMiddleware = require('../middlewares/roleMiddleware');
  *       - Transport Orders
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filtrowanie po statusie zlecenia
  *     responses:
  *       200:
  *         description: Lista zleceń transportowych
@@ -22,6 +28,39 @@ router.get(
   authMiddleware,
   roleMiddleware('admin', 'dispatcher'),
   transportOrderController.getTransportOrders
+);
+
+/**
+ * @openapi
+ * /transport-orders/available-resources:
+ *   get:
+ *     summary: Pobiera dostępnych kierowców, pojazdy i naczepy do formularza zlecenia
+ *     tags:
+ *       - Transport Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: cargoType
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Typ ładunku
+ *       - in: query
+ *         name: cargoWeightKg
+ *         required: true
+ *         schema:
+ *           type: number
+ *         description: Waga ładunku
+ *     responses:
+ *       200:
+ *         description: Dostępne zasoby do zlecenia
+ */
+router.get(
+  '/available-resources',
+  authMiddleware,
+  roleMiddleware('admin', 'dispatcher'),
+  transportOrderController.getAvailableResources
 );
 
 /**
@@ -69,7 +108,6 @@ router.get(
  *           schema:
  *             type: object
  *             required:
- *               - orderNumber
  *               - clientName
  *               - pickupLocation
  *               - deliveryLocation
@@ -93,13 +131,16 @@ router.get(
  *                 example: 12000
  *               cargoType:
  *                 type: string
- *                 example: elektronika
+ *                 example: food
+ *               cargoName:
+ *                 type: string
+ *                 example: jabłka
  *               plannedDistanceKm:
  *                 type: number
  *                 example: 170
  *               plannedDurationMinutes:
  *                 type: integer
- *                 example: 180
+ *                 example: 1440
  *               estimatedCost:
  *                 type: number
  *                 example: 900
@@ -113,6 +154,9 @@ router.get(
  *                 type: integer
  *                 example: 1
  *               vehicleId:
+ *                 type: integer
+ *                 example: 1
+ *               trailerId:
  *                 type: integer
  *                 example: 1
  *               createdByUserId:
@@ -162,46 +206,36 @@ router.post(
  *             properties:
  *               orderNumber:
  *                 type: string
- *                 example: ZT-2026-001
  *               clientName:
  *                 type: string
- *                 example: Firma XYZ
  *               pickupLocation:
  *                 type: string
- *                 example: Rzeszów
  *               deliveryLocation:
  *                 type: string
- *                 example: Kraków
  *               cargoWeightKg:
  *                 type: number
- *                 example: 12000
  *               cargoType:
  *                 type: string
- *                 example: elektronika
+ *               cargoName:
+ *                 type: string
  *               plannedDistanceKm:
  *                 type: number
- *                 example: 170
  *               plannedDurationMinutes:
  *                 type: integer
- *                 example: 180
  *               estimatedCost:
  *                 type: number
- *                 example: 900
  *               plannedDate:
  *                 type: string
- *                 example: 2026-05-20
  *               status:
  *                 type: string
- *                 example: planned
  *               driverId:
  *                 type: integer
- *                 example: 1
  *               vehicleId:
  *                 type: integer
- *                 example: 1
+ *               trailerId:
+ *                 type: integer
  *               createdByUserId:
  *                 type: integer
- *                 example: 6
  *     responses:
  *       200:
  *         description: Zlecenie transportowe zostało zaktualizowane
