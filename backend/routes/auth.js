@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 /**
  * @openapi
@@ -71,5 +72,36 @@ router.post('/register', authController.register);
  *         description: Logowanie zakończone sukcesem
  */
 router.post('/login', authController.login);
+
+/**
+ * @openapi
+ * /auth/change-password:
+ *   put:
+ *     summary: Zmiana hasła zalogowanego użytkownika
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 example: stareHaslo123
+ *               newPassword:
+ *                 type: string
+ *                 example: noweHaslo123
+ *     responses:
+ *       200:
+ *         description: Hasło zostało zmienione
+ */
+router.put('/change-password', authMiddleware, authController.changePassword);
 
 module.exports = router;

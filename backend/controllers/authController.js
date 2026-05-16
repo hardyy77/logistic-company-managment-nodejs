@@ -111,7 +111,41 @@ async function login(req, res) {
   }
 }
 
+async function changePassword(req, res) {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        error: 'oldPassword i newPassword są wymagane',
+      });
+    }
+
+    const result = await authService.changePassword(
+      req.user.userId,
+      oldPassword,
+      newPassword
+    );
+
+    if (result?.error) {
+      return res.status(result.statusCode || 400).json({
+        error: result.error,
+      });
+    }
+
+    return res.json({
+      message: 'Hasło zostało zmienione',
+    });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({
+      error: 'Błąd zmiany hasła',
+    });
+  }
+}
+
 module.exports = {
   register,
   login,
+  changePassword,
 };

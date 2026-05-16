@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const pool = require('../db');
 
 async function findUserByEmail(email) {
@@ -40,8 +41,54 @@ async function createUser({ firstName, lastName, email, passwordHash, roleId }) 
   return result.rows[0];
 }
 
+async function changePassword(userId, oldPassword, newPassword) {
+  const result = await pool.query(
+    `SELECT id, password_hash, is_active
+     FROM users
+     WHERE id = $1`,
+    [userId]
+  );
+
+  const user = result.rows[0];
+
+  if (!user) {
+    return {
+      error: 'Użytkownik nie został znaleziony',
+      statusCode: 404,
+    };
+  }
+
+  if (!user.is_active) {
+    return {
+      error: 'Konto użytkownika jest nieaktywne',
+      statusCode: 403,
+    };
+  }
+
+  const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password_hash);
+
+  if (!isOldPasswordValid) {
+    return {
+      error: 'Obecne hasło jest nieprawidłowe',
+      statusCode: 401,
+    };
+  }
+
+  const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+  await pool.query(
+    `UPDATE users
+     SET password_hash = $1
+     WHERE id = $2`,
+    [newPasswordHash, userId]
+  );
+
+  return { success: true };
+}
+
 module.exports = {
   findUserByEmail,
   getRoleByName,
   createUser,
+  changePassword,
 };
