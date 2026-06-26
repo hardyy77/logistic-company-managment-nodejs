@@ -272,7 +272,7 @@ export default function OrdersSection({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>Lista zleceń</CardTitle>
         </CardHeader>
@@ -329,7 +329,7 @@ export default function OrdersSection({
                     <Badge variant={badgeVariant(order.status)}>{order.status}</Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
                         variant="outline"
@@ -356,7 +356,7 @@ export default function OrdersSection({
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>
             {editingOrderId ? "Edytuj zlecenie" : "Dodaj zlecenie"}
@@ -364,7 +364,7 @@ export default function OrdersSection({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="rounded-lg border bg-slate-50 p-3 text-sm text-muted-foreground">
+            <div className="rounded-md border border-border bg-muted p-3 text-sm text-muted-foreground">
               {editingOrderId
                 ? "Edytujesz istniejące zlecenie."
                 : "Numer zlecenia zostanie nadany automatycznie przez system."}
@@ -398,7 +398,7 @@ export default function OrdersSection({
               <div className="space-y-2">
                 <Label>Typ ładunku</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.cargoType}
                   onChange={(e) => setForm({ ...form, cargoType: e.target.value })}
                 >
@@ -433,7 +433,7 @@ export default function OrdersSection({
               <div className="space-y-2">
                 <Label>Planowany czas realizacji</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.plannedDurationMinutes}
                   onChange={(e) =>
                     setForm({ ...form, plannedDurationMinutes: Number(e.target.value) })
@@ -482,7 +482,7 @@ export default function OrdersSection({
             <div className="space-y-2">
               <Label>Status</Label>
               <select
-                className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
               >
@@ -498,7 +498,7 @@ export default function OrdersSection({
 
             <Separator />
 
-            <div className="rounded-lg border bg-slate-50 p-3 text-sm">
+            <div className="rounded-md border border-border bg-muted p-3 text-sm">
               <div className="font-medium">Dostępne zasoby do tego zlecenia</div>
               <div className="mt-1 text-muted-foreground">
                 Backend filtruje zasoby na podstawie typu ładunku, masy i wymaganych uprawnień.
@@ -530,7 +530,7 @@ export default function OrdersSection({
               <div className="space-y-2">
                 <Label>Kierowca</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.driverId}
                   onChange={(e) => setForm({ ...form, driverId: e.target.value })}
                 >
@@ -546,7 +546,7 @@ export default function OrdersSection({
               <div className="space-y-2">
                 <Label>Pojazd</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.vehicleId}
                   onChange={(e) => setForm({ ...form, vehicleId: e.target.value })}
                 >
@@ -562,7 +562,7 @@ export default function OrdersSection({
               <div className="space-y-2">
                 <Label>Naczepa</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.trailerId}
                   onChange={(e) => setForm({ ...form, trailerId: e.target.value })}
                 >
@@ -576,7 +576,7 @@ export default function OrdersSection({
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="submit" className="flex-1" disabled={loading}>
                 {loading
                   ? "Zapisywanie..."

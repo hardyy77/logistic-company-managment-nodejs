@@ -26,7 +26,7 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Moje lokalne API',
+      title: 'lokalne API',
       version: '1.0.0',
       description: 'Dokumentacja API w Swagger UI',
     },

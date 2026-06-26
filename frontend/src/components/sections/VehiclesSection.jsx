@@ -162,7 +162,7 @@ export default function VehiclesSection({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>Lista pojazdów</CardTitle>
         </CardHeader>
@@ -198,7 +198,7 @@ export default function VehiclesSection({
                   </TableCell>
                   <TableCell>{vehicle.capacity_kg} kg</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
                         variant="outline"
@@ -225,7 +225,7 @@ export default function VehiclesSection({
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>
             {editingVehicleId ? "Edytuj pojazd" : "Dodaj pojazd"}
@@ -302,7 +302,7 @@ export default function VehiclesSection({
               <div className="space-y-2">
                 <Label>Status</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
                 >
@@ -340,7 +340,7 @@ export default function VehiclesSection({
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="submit" className="flex-1" disabled={loading}>
                 {loading
                   ? "Zapisywanie..."

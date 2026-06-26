@@ -148,7 +148,7 @@ export default function TrailersSection({
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>Lista naczep</CardTitle>
         </CardHeader>
@@ -182,7 +182,7 @@ export default function TrailersSection({
                   </TableCell>
                   <TableCell>{trailer.capacity_kg} kg</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
                         variant="outline"
@@ -209,7 +209,7 @@ export default function TrailersSection({
         </CardContent>
       </Card>
 
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>
             {editingTrailerId ? "Edytuj naczepę" : "Dodaj naczepę"}
@@ -230,7 +230,7 @@ export default function TrailersSection({
               <div className="space-y-2">
                 <Label>Typ naczepy</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.trailerType}
                   onChange={(e) => setForm({ ...form, trailerType: e.target.value })}
                 >
@@ -266,7 +266,7 @@ export default function TrailersSection({
               <div className="space-y-2">
                 <Label>Status</Label>
                 <select
-                  className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                   value={form.status}
                   onChange={(e) => setForm({ ...form, status: e.target.value })}
                 >
@@ -291,7 +291,7 @@ export default function TrailersSection({
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="submit" className="flex-1" disabled={loading}>
                 {loading
                   ? "Zapisywanie..."

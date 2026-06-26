@@ -300,7 +300,7 @@ export default function DriversSection({
 
   return (
     <div className="grid gap-6">
-      <Card className="rounded-2xl shadow-sm">
+      <Card className="rounded-md border-border bg-card">
         <CardHeader>
           <CardTitle>Lista kierowców</CardTitle>
         </CardHeader>
@@ -340,7 +340,7 @@ export default function DriversSection({
                   <TableCell>{driver.email || "—"}</TableCell>
                   <TableCell>{driver.user_id ? "Tak" : "Nie"}</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <Button
                         type="button"
                         variant="outline"
@@ -368,7 +368,7 @@ export default function DriversSection({
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-md border-border bg-card">
           <CardHeader>
             <CardTitle>
               {editingDriverId ? "Edytuj kierowcę" : "Dodaj kierowcę"}
@@ -441,7 +441,7 @@ export default function DriversSection({
                 <div className="space-y-2">
                   <Label>Status</Label>
                   <select
-                    className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                     value={form.status}
                     onChange={(e) => setForm({ ...form, status: e.target.value })}
                   >
@@ -472,7 +472,7 @@ export default function DriversSection({
                 </div>
               ) : null}
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button type="submit" className="flex-1" disabled={loading}>
                   {loading
                     ? "Zapisywanie..."
@@ -490,7 +490,7 @@ export default function DriversSection({
             </form>
 
             {createdCredentials ? (
-              <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 space-y-3">
+              <div className="space-y-3 rounded-md border border-primary/30 bg-primary/10 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="font-medium text-blue-900">
@@ -510,12 +510,12 @@ export default function DriversSection({
                   </Button>
                 </div>
 
-                <div className="rounded-md border bg-white p-3">
+                <div className="rounded-md border border-border bg-background p-3">
                   <div className="text-sm text-muted-foreground">Kierowca</div>
                   <div className="font-medium">{createdCredentials.fullName}</div>
                 </div>
 
-                <div className="rounded-md border bg-white p-3 flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-background p-3">
                   <div>
                     <div className="text-sm text-muted-foreground">Login</div>
                     <div className="font-medium break-all">{createdCredentials.email}</div>
@@ -529,7 +529,7 @@ export default function DriversSection({
                   </Button>
                 </div>
 
-                <div className="rounded-md border bg-white p-3 flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-background p-3">
                   <div>
                     <div className="text-sm text-muted-foreground">Hasło tymczasowe</div>
                     <div className="font-medium break-all">
@@ -551,7 +551,7 @@ export default function DriversSection({
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-md border-border bg-card">
           <CardHeader>
             <CardTitle>Zarządzanie uprawnieniami kierowcy</CardTitle>
           </CardHeader>
@@ -559,7 +559,7 @@ export default function DriversSection({
             <div className="space-y-2">
               <Label>Wybierz kierowcę</Label>
               <select
-                className="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                 value={selectedDriverId}
                 onChange={(e) => {
                   setSelectedDriverId(e.target.value);
@@ -579,9 +579,9 @@ export default function DriversSection({
               <>
                 <div className="space-y-2">
                   <Label>Dodaj uprawnienie</Label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <select
-                      className="flex h-10 flex-1 rounded-md border bg-background px-3 py-2 text-sm"
+                      className="flex h-10 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
                       value={selectedPermissionId}
                       onChange={(e) => setSelectedPermissionId(e.target.value)}
                     >

@@ -1,13 +1,11 @@
-import { Filter } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 export default function FilterBar({ label, value, options, onChange }) {
   return (
-    <div className="flex items-center gap-3">
-      <Filter className="h-4 w-4 text-muted-foreground" />
-      <Label className="text-sm">{label}</Label>
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <Label className="text-sm text-muted-foreground">{label}</Label>
       <select
-        className="flex h-10 min-w-[180px] rounded-md border bg-background px-3 py-2 text-sm"
+        className="flex h-9 min-w-[180px] rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >

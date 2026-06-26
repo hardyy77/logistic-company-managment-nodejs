@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { apiRequest } from "@/services/api";
+import { LockKeyhole } from "lucide-react";
 
 export default function LoginView({ onLogin, loading, error }) {
   const [mode, setMode] = useState("login");
@@ -78,14 +79,19 @@ export default function LoginView({ onLogin, loading, error }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <Card className="w-full max-w-md rounded-2xl shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            {mode === "login" ? "Logowanie" : "Zmiana hasła"}
-          </CardTitle>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
+      <Card className="w-full max-w-sm bg-card">
+        <CardHeader className="border-b border-border px-5 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <LockKeyhole className="h-4 w-4" />
+            </div>
+            <CardTitle className="text-lg">
+              {mode === "login" ? "Logowanie" : "Zmiana hasła"}
+            </CardTitle>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-5">
           {mode === "login" ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div className="space-y-2">
@@ -93,9 +99,7 @@ export default function LoginView({ onLogin, loading, error }) {
                 <Input
                   type="email"
                   value={form.email}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, email: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="Wpisz email"
                 />
               </div>
@@ -105,34 +109,32 @@ export default function LoginView({ onLogin, loading, error }) {
                 <Input
                   type="password"
                   value={form.password}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, password: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
                   placeholder="Wpisz hasło"
                 />
               </div>
 
               {error ? (
-                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="rounded-md border border-destructive bg-destructive px-3 py-2 text-sm text-white">
                   {error}
                 </div>
               ) : null}
 
               {changePasswordMessage ? (
-                <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+                <div className="rounded-md border border-[#3ba55d] bg-[#2f4538] px-3 py-2 text-sm text-[#d3f8df]">
                   {changePasswordMessage}
                 </div>
               ) : null}
 
-              <div className="flex gap-2">
-                <Button type="submit" className="flex-1" disabled={loading}>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button type="submit" className="h-9 rounded-md" disabled={loading}>
                   {loading ? "Logowanie..." : "Zaloguj się"}
                 </Button>
 
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1"
+                  className="h-9 rounded-md"
                   onClick={() => {
                     setMode("changePassword");
                     setChangePasswordError("");
@@ -150,9 +152,7 @@ export default function LoginView({ onLogin, loading, error }) {
                 <Input
                   type="email"
                   value={form.email}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, email: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="Wpisz email"
                 />
               </div>
@@ -162,9 +162,7 @@ export default function LoginView({ onLogin, loading, error }) {
                 <Input
                   type="password"
                   value={form.password}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, password: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
                   placeholder="Wpisz obecne hasło"
                 />
               </div>
@@ -174,9 +172,7 @@ export default function LoginView({ onLogin, loading, error }) {
                 <Input
                   type="password"
                   value={form.newPassword}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, newPassword: e.target.value }))
-                  }
+                  onChange={(e) => setForm((prev) => ({ ...prev, newPassword: e.target.value }))}
                   placeholder="Wpisz nowe hasło"
                 />
               </div>
@@ -197,26 +193,26 @@ export default function LoginView({ onLogin, loading, error }) {
               </div>
 
               {changePasswordError ? (
-                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="rounded-md border border-destructive bg-destructive px-3 py-2 text-sm text-white">
                   {changePasswordError}
                 </div>
               ) : null}
 
-              <div className="flex gap-2">
-                <Button type="submit" className="flex-1" disabled={changePasswordLoading}>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button type="submit" className="h-9 rounded-md" disabled={changePasswordLoading}>
                   {changePasswordLoading ? "Zmiana..." : "Zapisz hasło"}
                 </Button>
 
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1"
+                  className="h-9 rounded-md"
                   onClick={() => {
                     setMode("login");
                     setChangePasswordError("");
                   }}
                 >
-                  Wróć do logowania
+                  Wróć
                 </Button>
               </div>
             </form>

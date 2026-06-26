@@ -106,7 +106,7 @@ export default function DriverPanel({ token, user, onLogout }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-background p-4 text-foreground sm:p-6 lg:p-8">
       <div className="pointer-events-none fixed right-4 top-4 z-50 flex flex-col gap-3">
         <ToastMessage
           type="success"
@@ -129,7 +129,7 @@ export default function DriverPanel({ token, user, onLogout }) {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={fetchDriverPanelData}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Odśwież
@@ -141,13 +141,13 @@ export default function DriverPanel({ token, user, onLogout }) {
         </div>
 
         {loading ? (
-          <div className="rounded-xl border bg-white px-4 py-3 text-sm text-muted-foreground shadow-sm">
+          <div className="rounded-md border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
             Ładowanie danych kierowcy...
           </div>
         ) : null}
 
         <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-          <Card className="rounded-2xl shadow-sm">
+          <Card className="rounded-md border-border bg-card">
             <CardHeader>
               <CardTitle>Moje dane</CardTitle>
             </CardHeader>
@@ -211,7 +211,7 @@ export default function DriverPanel({ token, user, onLogout }) {
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl shadow-sm">
+          <Card className="rounded-md border-border bg-card">
             <CardHeader>
               <CardTitle>Moje aktualne zlecenie</CardTitle>
             </CardHeader>
@@ -299,7 +299,7 @@ export default function DriverPanel({ token, user, onLogout }) {
           </Card>
         </div>
 
-        <Card className="rounded-2xl shadow-sm">
+        <Card className="rounded-md border-border bg-card">
           <CardHeader>
             <CardTitle>Historia moich zleceń</CardTitle>
           </CardHeader>
